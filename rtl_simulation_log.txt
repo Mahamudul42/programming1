@@ -1,0 +1,274 @@
+nohup: ignoring input
+=== Building and Testing RTL Processors ===
+Working in: /export/scratch/users/hasan181
+1. Setting up Piccolo...
+Building Piccolo with Verilator...
+INFO: Verilating Verilog files (in newly created obj_dir)
+sed  -f ../../builds/Resources/Verilator_resources/sed_script.txt  Verilog_RTL/mkTop_HW_Side.v > tmp1.v
+cat  ../../builds/Resources/Verilator_resources/verilator_config.vlt \
+     ../../builds/Resources/Verilator_resources/import_DPI_C_decls.v \
+     tmp1.v                                     > Verilog_RTL/mkTop_HW_Side_edited.v
+rm   -f  tmp1.v
+verilator \
+	-IVerilog_RTL \
+	-I../../src_bsc_lib_RTL \
+	--stats -O3 -CFLAGS -O3 -LDFLAGS -static --x-assign fast --x-initial fast --noassert \
+	--cc  mkTop_HW_Side_edited.v \
+	--exe  sim_main.cpp \
+	../../src_Testbench/Top/C_Imported_Functions.c
+make: verilator: No such file or directory
+make: *** [../../builds/Resources/Include_verilator.mk:52: simulator] Error 127
+Execution time: .017183846 seconds
+Running Piccolo tests...
+make -C  ../../Tests/elf_to_hex
+make[1]: Entering directory '/export/scratch/users/hasan181/Piccolo/Tests/elf_to_hex'
+gcc -g  -o elf_to_hex  elf_to_hex.c  -lelf
+/tmp/ccUGKdCG.o: in function `c_mem_load_elf':
+/export/scratch/users/hasan181/Piccolo/Tests/elf_to_hex/elf_to_hex.c:94:(.text+0x25a): relocation truncated to fit: R_X86_64_PC32 against symbol `bitwidth' defined in .bss section in /tmp/ccUGKdCG.o
+/export/scratch/users/hasan181/Piccolo/Tests/elf_to_hex/elf_to_hex.c:98:(.text+0x2a2): relocation truncated to fit: R_X86_64_PC32 against symbol `bitwidth' defined in .bss section in /tmp/ccUGKdCG.o
+/export/scratch/users/hasan181/Piccolo/Tests/elf_to_hex/elf_to_hex.c:130:(.text+0x394): relocation truncated to fit: R_X86_64_PC32 against symbol `min_addr' defined in .bss section in /tmp/ccUGKdCG.o
+/export/scratch/users/hasan181/Piccolo/Tests/elf_to_hex/elf_to_hex.c:131:(.text+0x39f): relocation truncated to fit: R_X86_64_PC32 against symbol `max_addr' defined in .bss section in /tmp/ccUGKdCG.o
+/export/scratch/users/hasan181/Piccolo/Tests/elf_to_hex/elf_to_hex.c:132:(.text+0x3aa): relocation truncated to fit: R_X86_64_PC32 against symbol `pc_start' defined in .bss section in /tmp/ccUGKdCG.o
+/export/scratch/users/hasan181/Piccolo/Tests/elf_to_hex/elf_to_hex.c:133:(.text+0x3b5): relocation truncated to fit: R_X86_64_PC32 against symbol `pc_exit' defined in .bss section in /tmp/ccUGKdCG.o
+/export/scratch/users/hasan181/Piccolo/Tests/elf_to_hex/elf_to_hex.c:134:(.text+0x3c0): relocation truncated to fit: R_X86_64_PC32 against symbol `tohost_addr' defined in .bss section in /tmp/ccUGKdCG.o
+/export/scratch/users/hasan181/Piccolo/Tests/elf_to_hex/elf_to_hex.c:155:(.text+0x4c6): relocation truncated to fit: R_X86_64_PC32 against symbol `min_addr' defined in .bss section in /tmp/ccUGKdCG.o
+/export/scratch/users/hasan181/Piccolo/Tests/elf_to_hex/elf_to_hex.c:156:(.text+0x4d6): relocation truncated to fit: R_X86_64_PC32 against symbol `min_addr' defined in .bss section in /tmp/ccUGKdCG.o
+/export/scratch/users/hasan181/Piccolo/Tests/elf_to_hex/elf_to_hex.c:157:(.text+0x4f3): relocation truncated to fit: R_X86_64_PC32 against symbol `max_addr' defined in .bss section in /tmp/ccUGKdCG.o
+/export/scratch/users/hasan181/Piccolo/Tests/elf_to_hex/elf_to_hex.c:158:(.text+0x515): additional relocation overflows omitted from the output
+collect2: error: ld returned 1 exit status
+make[1]: *** [Makefile:7: elf_to_hex] Error 1
+make[1]: Leaving directory '/export/scratch/users/hasan181/Piccolo/Tests/elf_to_hex'
+make: *** [../../builds/Resources/Include_Common.mk:77: test] Error 2
+Execution time: .089034699 seconds
+Running regressions on ISA tests; saving logs in Logs/
+../../Tests/Run_regression.py  ./exe_HW_sim  ../..  ./Logs  RV32ACIMU
+ERROR: The given simulation path does not seem to exist?
+Use flag --help  or --h for a help message
+Traceback (most recent call last):
+  File "/export/scratch/users/hasan181/Piccolo/builds/RV32ACIMU_Piccolo_verilator/../../Tests/Run_regression.py", line 452, in <module>
+    sys.exit (main (sys.argv))
+              ^^^^^^^^^^^^^^^
+  File "/export/scratch/users/hasan181/Piccolo/builds/RV32ACIMU_Piccolo_verilator/../../Tests/Run_regression.py", line 71, in main
+    sys.stderr.write ("    Simulation path: " + sim_path + "\n")
+                                                ^^^^^^^^
+NameError: name 'sim_path' is not defined
+make: *** [../../builds/Resources/Include_Common.mk:87: isa_tests] Error 1
+Execution time: .062606808 seconds
+Building Piccolo with Bluesim...
+INFO: Re-compiling Core (CPU, Caches)
+bsc -u -elab -sim  -bdir build_dir  -simdir build_dir  -info-dir build_dir  -D RV32 -D ISA_PRIV_M  -D ISA_PRIV_U -D ISA_I  -D ISA_M  -D ISA_A  -D ISA_C -D SHIFT_BARREL -D MULT_SYNTH -D Near_Mem_Caches -D FABRIC64  -keep-fires -aggressive-conditions -no-warn-action-shadowing -no-show-timestamps -check-assert -suppress-warnings G0020 +RTS -K128M -RTS  -show-range-conflict  -p :../../src_Core/CPU:../../src_Core/ISA:../../src_Core/RegFiles:../../src_Core/Core:../../src_Core/Near_Mem_VM:../../src_Core/PLIC:../../src_Core/Near_Mem_IO:../../src_Core/Debug_Module:../../src_Core/BSV_Additional_Libs:../../src_Testbench/Top:../../src_Testbench/SoC:../../src_Testbench/Fabrics/AXI4:+  ../../src_Testbench/Top/Top_HW_Side.bsv
+make: bsc: No such file or directory
+make: *** [../../builds/Resources/Include_bluesim.mk:18: compile] Error 127
+Execution time: .015370953 seconds
+make -C  ../../Tests/elf_to_hex
+make[1]: Entering directory '/export/scratch/users/hasan181/Piccolo/Tests/elf_to_hex'
+gcc -g  -o elf_to_hex  elf_to_hex.c  -lelf
+/tmp/ccXVHHCW.o: in function `c_mem_load_elf':
+/export/scratch/users/hasan181/Piccolo/Tests/elf_to_hex/elf_to_hex.c:94:(.text+0x25a): relocation truncated to fit: R_X86_64_PC32 against symbol `bitwidth' defined in .bss section in /tmp/ccXVHHCW.o
+/export/scratch/users/hasan181/Piccolo/Tests/elf_to_hex/elf_to_hex.c:98:(.text+0x2a2): relocation truncated to fit: R_X86_64_PC32 against symbol `bitwidth' defined in .bss section in /tmp/ccXVHHCW.o
+/export/scratch/users/hasan181/Piccolo/Tests/elf_to_hex/elf_to_hex.c:130:(.text+0x394): relocation truncated to fit: R_X86_64_PC32 against symbol `min_addr' defined in .bss section in /tmp/ccXVHHCW.o
+/export/scratch/users/hasan181/Piccolo/Tests/elf_to_hex/elf_to_hex.c:131:(.text+0x39f): relocation truncated to fit: R_X86_64_PC32 against symbol `max_addr' defined in .bss section in /tmp/ccXVHHCW.o
+/export/scratch/users/hasan181/Piccolo/Tests/elf_to_hex/elf_to_hex.c:132:(.text+0x3aa): relocation truncated to fit: R_X86_64_PC32 against symbol `pc_start' defined in .bss section in /tmp/ccXVHHCW.o
+/export/scratch/users/hasan181/Piccolo/Tests/elf_to_hex/elf_to_hex.c:133:(.text+0x3b5): relocation truncated to fit: R_X86_64_PC32 against symbol `pc_exit' defined in .bss section in /tmp/ccXVHHCW.o
+/export/scratch/users/hasan181/Piccolo/Tests/elf_to_hex/elf_to_hex.c:134:(.text+0x3c0): relocation truncated to fit: R_X86_64_PC32 against symbol `tohost_addr' defined in .bss section in /tmp/ccXVHHCW.o
+/export/scratch/users/hasan181/Piccolo/Tests/elf_to_hex/elf_to_hex.c:155:(.text+0x4c6): relocation truncated to fit: R_X86_64_PC32 against symbol `min_addr' defined in .bss section in /tmp/ccXVHHCW.o
+/export/scratch/users/hasan181/Piccolo/Tests/elf_to_hex/elf_to_hex.c:156:(.text+0x4d6): relocation truncated to fit: R_X86_64_PC32 against symbol `min_addr' defined in .bss section in /tmp/ccXVHHCW.o
+/export/scratch/users/hasan181/Piccolo/Tests/elf_to_hex/elf_to_hex.c:157:(.text+0x4f3): relocation truncated to fit: R_X86_64_PC32 against symbol `max_addr' defined in .bss section in /tmp/ccXVHHCW.o
+/export/scratch/users/hasan181/Piccolo/Tests/elf_to_hex/elf_to_hex.c:158:(.text+0x515): additional relocation overflows omitted from the output
+collect2: error: ld returned 1 exit status
+make[1]: *** [Makefile:7: elf_to_hex] Error 1
+make[1]: Leaving directory '/export/scratch/users/hasan181/Piccolo/Tests/elf_to_hex'
+make: *** [../../builds/Resources/Include_Common.mk:77: test] Error 2
+Execution time: .084692555 seconds
+Running regressions on ISA tests; saving logs in Logs/
+../../Tests/Run_regression.py  ./exe_HW_sim  ../..  ./Logs  RV32ACIMU
+ERROR: The given simulation path does not seem to exist?
+Use flag --help  or --h for a help message
+Traceback (most recent call last):
+  File "/export/scratch/users/hasan181/Piccolo/builds/RV32ACIMU_Piccolo_bluesim/../../Tests/Run_regression.py", line 452, in <module>
+    sys.exit (main (sys.argv))
+              ^^^^^^^^^^^^^^^
+  File "/export/scratch/users/hasan181/Piccolo/builds/RV32ACIMU_Piccolo_bluesim/../../Tests/Run_regression.py", line 71, in main
+    sys.stderr.write ("    Simulation path: " + sim_path + "\n")
+                                                ^^^^^^^^
+NameError: name 'sim_path' is not defined
+make: *** [../../builds/Resources/Include_Common.mk:87: isa_tests] Error 1
+Execution time: .060679802 seconds
+2. Setting up Flute...
+Building Flute with Verilator...
+INFO: Verilating Verilog files (in newly created obj_dir)
+sed  -f ../../builds/Resources/Verilator_resources/sed_script.txt  Verilog_RTL/mkTop_HW_Side.v > tmp1.v
+cat  ../../builds/Resources/Verilator_resources/verilator_config.vlt \
+     ../../builds/Resources/Verilator_resources/import_DPI_C_decls.v \
+     tmp1.v                                     > Verilog_RTL/mkTop_HW_Side_edited.v
+rm   -f  tmp1.v
+verilator \
+	-IVerilog_RTL \
+	-I../../src_bsc_lib_RTL \
+	--stats -O3 -CFLAGS -O3 -LDFLAGS -static --x-assign fast --x-initial fast --noassert \
+	--cc  mkTop_HW_Side_edited.v \
+	--exe  sim_main.cpp \
+	../../src_Testbench/Top/C_Imported_Functions.c
+make: verilator: No such file or directory
+make: *** [../../builds/Resources/Include_verilator.mk:52: simulator] Error 127
+Execution time: .027249584 seconds
+make -C  ../../Tests/elf_to_hex
+make[1]: Entering directory '/export/scratch/users/hasan181/Flute/Tests/elf_to_hex'
+gcc -g  -o elf_to_hex  elf_to_hex.c  -lelf
+/tmp/cc7j1Nu6.o: in function `c_mem_load_elf':
+/export/scratch/users/hasan181/Flute/Tests/elf_to_hex/elf_to_hex.c:94:(.text+0x25a): relocation truncated to fit: R_X86_64_PC32 against symbol `bitwidth' defined in .bss section in /tmp/cc7j1Nu6.o
+/export/scratch/users/hasan181/Flute/Tests/elf_to_hex/elf_to_hex.c:98:(.text+0x2a2): relocation truncated to fit: R_X86_64_PC32 against symbol `bitwidth' defined in .bss section in /tmp/cc7j1Nu6.o
+/export/scratch/users/hasan181/Flute/Tests/elf_to_hex/elf_to_hex.c:130:(.text+0x394): relocation truncated to fit: R_X86_64_PC32 against symbol `min_addr' defined in .bss section in /tmp/cc7j1Nu6.o
+/export/scratch/users/hasan181/Flute/Tests/elf_to_hex/elf_to_hex.c:131:(.text+0x39f): relocation truncated to fit: R_X86_64_PC32 against symbol `max_addr' defined in .bss section in /tmp/cc7j1Nu6.o
+/export/scratch/users/hasan181/Flute/Tests/elf_to_hex/elf_to_hex.c:132:(.text+0x3aa): relocation truncated to fit: R_X86_64_PC32 against symbol `pc_start' defined in .bss section in /tmp/cc7j1Nu6.o
+/export/scratch/users/hasan181/Flute/Tests/elf_to_hex/elf_to_hex.c:133:(.text+0x3b5): relocation truncated to fit: R_X86_64_PC32 against symbol `pc_exit' defined in .bss section in /tmp/cc7j1Nu6.o
+/export/scratch/users/hasan181/Flute/Tests/elf_to_hex/elf_to_hex.c:134:(.text+0x3c0): relocation truncated to fit: R_X86_64_PC32 against symbol `tohost_addr' defined in .bss section in /tmp/cc7j1Nu6.o
+/export/scratch/users/hasan181/Flute/Tests/elf_to_hex/elf_to_hex.c:155:(.text+0x4c6): relocation truncated to fit: R_X86_64_PC32 against symbol `min_addr' defined in .bss section in /tmp/cc7j1Nu6.o
+/export/scratch/users/hasan181/Flute/Tests/elf_to_hex/elf_to_hex.c:156:(.text+0x4d6): relocation truncated to fit: R_X86_64_PC32 against symbol `min_addr' defined in .bss section in /tmp/cc7j1Nu6.o
+/export/scratch/users/hasan181/Flute/Tests/elf_to_hex/elf_to_hex.c:157:(.text+0x4f3): relocation truncated to fit: R_X86_64_PC32 against symbol `max_addr' defined in .bss section in /tmp/cc7j1Nu6.o
+/export/scratch/users/hasan181/Flute/Tests/elf_to_hex/elf_to_hex.c:158:(.text+0x515): additional relocation overflows omitted from the output
+collect2: error: ld returned 1 exit status
+make[1]: *** [Makefile:7: elf_to_hex] Error 1
+make[1]: Leaving directory '/export/scratch/users/hasan181/Flute/Tests/elf_to_hex'
+make: *** [../../builds/Resources/Include_Common.mk:101: test] Error 2
+Execution time: .074273187 seconds
+Running regressions on ISA tests; saving logs in Logs/
+../../Tests/Run_regression.py  ./exe_HW_sim  ../..  ./Logs  RV64GC  MSU
+ERROR: The given simulation path does not seem to exist?
+Use flag --help  or --h for a help message
+Traceback (most recent call last):
+  File "/export/scratch/users/hasan181/Flute/builds/Flute_RV64GC_MSU_WB_L1_L2_verilator_tohost/../../Tests/Run_regression.py", line 473, in <module>
+    sys.exit (main (sys.argv))
+              ^^^^^^^^^^^^^^^
+  File "/export/scratch/users/hasan181/Flute/builds/Flute_RV64GC_MSU_WB_L1_L2_verilator_tohost/../../Tests/Run_regression.py", line 71, in main
+    sys.stderr.write ("    Simulation path: " + sim_path + "\n")
+                                                ^^^^^^^^
+NameError: name 'sim_path' is not defined
+make: *** [../../builds/Resources/Include_Common.mk:111: isa_tests] Error 1
+Execution time: .057766792 seconds
+Building Flute with Bluesim...
+INFO: Re-compiling Core (CPU, Caches)
+bsc -u -elab -sim  -bdir build_dir  -simdir build_dir  -info-dir build_dir  -D RV64 -D ISA_I  -D ISA_M  -D ISA_A  -D ISA_C -D ISA_F  -D ISA_D  -D INCLUDE_FDIV  -D INCLUDE_FSQRT -D ISA_PRIV_M  -D ISA_PRIV_S  -D ISA_PRIV_U -D SV39 -D SHIFT_BARREL -D MULT_SYNTH -D Near_Mem_Caches -D FABRIC64 -D WATCH_TOHOST  -D CORE_SMALL -D NUM_CORES=1 -D CACHE_LARGE  -keep-fires -aggressive-conditions -no-warn-action-shadowing -no-show-timestamps -check-assert -suppress-warnings G0020 +RTS -K128M -RTS  -show-range-conflict  -p ../../src_Core/Near_Mem_VM_WB_L1_L2/src_LLCache:../../src_Core/Near_Mem_VM_WB_L1_L2/src_LLCache/procs/lib:../../src_Core/Near_Mem_VM_WB_L1_L2/src_LLCache/procs/RV64G_OOO:../../src_Core/Near_Mem_VM_WB_L1_L2/src_LLCache/coherence/src:../../src_Core/CPU:../../src_Core/ISA:../../src_Core/RegFiles:../../src_Core/Core_v2:../../src_Core/Cache_Config:../../src_Core/Near_Mem_VM_WB_L1_L2:../../src_Core/PLIC:../../src_Core/Near_Mem_IO:../../src_Core/Debug_Module:../../src_Core/BSV_Additional_Libs::../../src_Testbench/Top:../../src_Testbench/SoC:../../src_Testbench/Fabrics/AXI4:+  ../../src_Testbench/Top/Top_HW_Side.bsv
+make: bsc: No such file or directory
+make: *** [../../builds/Resources/Include_bluesim.mk:18: compile] Error 127
+Execution time: .011354667 seconds
+make -C  ../../Tests/elf_to_hex
+make[1]: Entering directory '/export/scratch/users/hasan181/Flute/Tests/elf_to_hex'
+gcc -g  -o elf_to_hex  elf_to_hex.c  -lelf
+/tmp/ccofSbB6.o: in function `c_mem_load_elf':
+/export/scratch/users/hasan181/Flute/Tests/elf_to_hex/elf_to_hex.c:94:(.text+0x25a): relocation truncated to fit: R_X86_64_PC32 against symbol `bitwidth' defined in .bss section in /tmp/ccofSbB6.o
+/export/scratch/users/hasan181/Flute/Tests/elf_to_hex/elf_to_hex.c:98:(.text+0x2a2): relocation truncated to fit: R_X86_64_PC32 against symbol `bitwidth' defined in .bss section in /tmp/ccofSbB6.o
+/export/scratch/users/hasan181/Flute/Tests/elf_to_hex/elf_to_hex.c:130:(.text+0x394): relocation truncated to fit: R_X86_64_PC32 against symbol `min_addr' defined in .bss section in /tmp/ccofSbB6.o
+/export/scratch/users/hasan181/Flute/Tests/elf_to_hex/elf_to_hex.c:131:(.text+0x39f): relocation truncated to fit: R_X86_64_PC32 against symbol `max_addr' defined in .bss section in /tmp/ccofSbB6.o
+/export/scratch/users/hasan181/Flute/Tests/elf_to_hex/elf_to_hex.c:132:(.text+0x3aa): relocation truncated to fit: R_X86_64_PC32 against symbol `pc_start' defined in .bss section in /tmp/ccofSbB6.o
+/export/scratch/users/hasan181/Flute/Tests/elf_to_hex/elf_to_hex.c:133:(.text+0x3b5): relocation truncated to fit: R_X86_64_PC32 against symbol `pc_exit' defined in .bss section in /tmp/ccofSbB6.o
+/export/scratch/users/hasan181/Flute/Tests/elf_to_hex/elf_to_hex.c:134:(.text+0x3c0): relocation truncated to fit: R_X86_64_PC32 against symbol `tohost_addr' defined in .bss section in /tmp/ccofSbB6.o
+/export/scratch/users/hasan181/Flute/Tests/elf_to_hex/elf_to_hex.c:155:(.text+0x4c6): relocation truncated to fit: R_X86_64_PC32 against symbol `min_addr' defined in .bss section in /tmp/ccofSbB6.o
+/export/scratch/users/hasan181/Flute/Tests/elf_to_hex/elf_to_hex.c:156:(.text+0x4d6): relocation truncated to fit: R_X86_64_PC32 against symbol `min_addr' defined in .bss section in /tmp/ccofSbB6.o
+/export/scratch/users/hasan181/Flute/Tests/elf_to_hex/elf_to_hex.c:157:(.text+0x4f3): relocation truncated to fit: R_X86_64_PC32 against symbol `max_addr' defined in .bss section in /tmp/ccofSbB6.o
+/export/scratch/users/hasan181/Flute/Tests/elf_to_hex/elf_to_hex.c:158:(.text+0x515): additional relocation overflows omitted from the output
+collect2: error: ld returned 1 exit status
+make[1]: *** [Makefile:7: elf_to_hex] Error 1
+make[1]: Leaving directory '/export/scratch/users/hasan181/Flute/Tests/elf_to_hex'
+make: *** [../../builds/Resources/Include_Common.mk:101: test] Error 2
+Execution time: .077356993 seconds
+Running regressions on ISA tests; saving logs in Logs/
+../../Tests/Run_regression.py  ./exe_HW_sim  ../..  ./Logs  RV64GC  MSU
+ERROR: The given simulation path does not seem to exist?
+Use flag --help  or --h for a help message
+Traceback (most recent call last):
+  File "/export/scratch/users/hasan181/Flute/builds/Flute_RV64GC_MSU_WB_L1_L2_bluesim_tohost/../../Tests/Run_regression.py", line 473, in <module>
+    sys.exit (main (sys.argv))
+              ^^^^^^^^^^^^^^^
+  File "/export/scratch/users/hasan181/Flute/builds/Flute_RV64GC_MSU_WB_L1_L2_bluesim_tohost/../../Tests/Run_regression.py", line 71, in main
+    sys.stderr.write ("    Simulation path: " + sim_path + "\n")
+                                                ^^^^^^^^
+NameError: name 'sim_path' is not defined
+make: *** [../../builds/Resources/Include_Common.mk:111: isa_tests] Error 1
+Execution time: .062257742 seconds
+3. Setting up Toooba...
+Building Toooba with Verilator...
+INFO: Verilating Verilog files (in newly created obj_dir)
+sed  -f ../../builds/Resources/Verilator_resources/sed_script.txt  Verilog_RTL/mkTop_HW_Side.v > tmp1.v
+cat  ../../builds/Resources/Verilator_resources/verilator_config.vlt \
+     ../../builds/Resources/Verilator_resources/import_DPI_C_decls.v \
+     tmp1.v                                     > Verilog_RTL/mkTop_HW_Side_edited.v
+rm   -f  tmp1.v
+verilator \
+	-IVerilog_RTL \
+	-I../../src_Core/RISCY_OOO/fpgautils/xilinx/fpu \
+	-I../../src_Core/RISCY_OOO/fpgautils/xilinx/reset_regs \
+	-I../../src_Core/RISCY_OOO/procs/asic/bluespec_verilog \
+	-I../../src_bsc_lib_RTL \
+	--stats --x-assign fast --x-initial fast --noassert \
+	--cc  mkTop_HW_Side_edited.v \
+	--exe  sim_main.cpp \
+	../../src_Testbench/Top/C_Imported_Functions.c
+make: verilator: No such file or directory
+make: *** [../../builds/Resources/Include_verilator.mk:53: simulator] Error 127
+Execution time: .026945257 seconds
+make -C  ../../Tests/elf_to_hex
+make[1]: Entering directory '/export/scratch/users/hasan181/Toooba/Tests/elf_to_hex'
+make[1]: 'elf_to_hex' is up to date.
+make[1]: Leaving directory '/export/scratch/users/hasan181/Toooba/Tests/elf_to_hex'
+../../Tests/elf_to_hex/elf_to_hex  ../../Tests/isa/rv64ui-p-add  Mem.hex
+c_mem_load_elf: ../../Tests/isa/rv64ui-p-add is a 64-bit ELF file
+Section .text.init      : addr         80000000 to addr         80000644; size 0x     644 (= 1604) bytes
+Section .tohost         : addr         80001000 to addr         80001048; size 0x      48 (= 72) bytes
+Section .riscv.attributes: Ignored
+Section .symtab         : Searching for addresses of '_start', 'exit' and 'tohost' symbols
+Writing symbols to:    symbol_table.txt
+    No 'exit' label found
+Section .strtab         : Ignored
+Section .shstrtab       : Ignored
+Min addr:                    80000000 (hex)
+Max addr:                    80001047 (hex)
+Writing mem hex to file 'Mem.hex'
+Subtracting 0x80000000 base from addresses
+./exe_HW_sim  +v1  +tohost
+make: ./exe_HW_sim: No such file or directory
+make: *** [../../builds/Resources/Include_Common.mk:87: test] Error 127
+Execution time: .763477772 seconds
+Running regressions on ISA tests; saving logs in Logs/
+../../Tests/Run_regression.py  ./exe_HW_sim  ../..  ./Logs  RV64ACDFIMSU
+ERROR: The given simulation path does not seem to exist?
+Use flag --help  or --h for a help message
+Traceback (most recent call last):
+  File "/export/scratch/users/hasan181/Toooba/builds/RV64ACDFIMSU_Toooba_verilator/../../Tests/Run_regression.py", line 441, in <module>
+    sys.exit (main (sys.argv))
+              ^^^^^^^^^^^^^^^
+  File "/export/scratch/users/hasan181/Toooba/builds/RV64ACDFIMSU_Toooba_verilator/../../Tests/Run_regression.py", line 70, in main
+    sys.stderr.write ("    Simulation path: " + sim_path + "\n")
+                                                ^^^^^^^^
+NameError: name 'sim_path' is not defined
+make: *** [../../builds/Resources/Include_Common.mk:95: isa_tests] Error 1
+Execution time: .053677351 seconds
+Building Toooba with Bluesim...
+INFO: Re-compiling Core (CPU, Caches)
+bsc -u -elab -sim  -bdir build_dir  -simdir build_dir  -info-dir build_dir  -D RV64 -D ISA_PRIV_M  -D ISA_PRIV_U  -D ISA_PRIV_S -D SV39 -D ISA_I  -D ISA_M  -D ISA_A  -D ISA_F  -D ISA_D  -D ISA_FD_DIV  -D ISA_C -D PERFORMANCE_MONITORING -D SHIFT_BARREL -D MULT_SYNTH -D Near_Mem_Caches -D FABRIC64  -D BSIM  -D CORE_SMALL -D NUM_CORES=1 -D CACHE_LARGE -D XILINX_FP_FMA_LATENCY=3 -D XILINX_INT_MUL_LATENCY=2 -D USE_BSV_BRAM_SYNC_FIFO -D INSTR_PREFETCHER_IN_NONE -D INSTR_PREFETCHER_SINGLE_WINDOW_TARGET -D DATA_PREFETCHER_IN_L1 -D DATA_PREFETCHER_STRIDE -keep-fires -aggressive-conditions -no-warn-action-shadowing -check-assert -suppress-warnings G0020 -steps-max-intervals 10000000 -steps-warn-interval 1000000 +RTS -K128M -RTS  -show-range-conflict  -p ../../src_Core/RISCY_OOO/procs/RV64G_OOO:../../src_Core/RISCY_OOO/procs/lib:../../src_Core/RISCY_OOO/coherence/src:../../src_Core/RISCY_OOO/fpgautils/lib:../../src_Core/RISCY_OOO/connectal/bsv:../../src_Core/RISCY_OOO/connectal/tests/spi:../../src_Core/RISCY_OOO/connectal/lib/bsv:../../src_Core/CPU:../../src_Core/ISA:../../src_Core/Core:../../src_Core/PLIC:../../src_Core/Debug_Module:../../src_Core/BSV_Additional_Libs:../../src_Testbench/Top:../../src_Testbench/SoC:../../src_Testbench/Fabrics/AXI4:../../src_Core/BSV_Additional_Libs/BlueStuff:../../src_Core/BSV_Additional_Libs/BlueStuff/BlueUtils:../../src_Core/BSV_Additional_Libs/BlueStuff/BlueBasics:+  ../../src_Testbench/Top/Top_HW_Side.bsv
+make: bsc: No such file or directory
+make: *** [../../builds/Resources/Include_bluesim.mk:18: compile] Error 127
+Execution time: .016694519 seconds
+make -C  ../../Tests/elf_to_hex
+make[1]: Entering directory '/export/scratch/users/hasan181/Toooba/Tests/elf_to_hex'
+make[1]: 'elf_to_hex' is up to date.
+make[1]: Leaving directory '/export/scratch/users/hasan181/Toooba/Tests/elf_to_hex'
+../../Tests/elf_to_hex/elf_to_hex  ../../Tests/isa/rv64ui-p-add  Mem.hex
+c_mem_load_elf: ../../Tests/isa/rv64ui-p-add is a 64-bit ELF file
+Section .text.init      : addr         80000000 to addr         80000644; size 0x     644 (= 1604) bytes
+Section .tohost         : addr         80001000 to addr         80001048; size 0x      48 (= 72) bytes
+Section .riscv.attributes: Ignored
+Section .symtab         : Searching for addresses of '_start', 'exit' and 'tohost' symbols
+Writing symbols to:    symbol_table.txt
+    No 'exit' label found
+Section .strtab         : Ignored
+Section .shstrtab       : Ignored
+Min addr:                    80000000 (hex)
+Max addr:                    80001047 (hex)
+Writing mem hex to file 'Mem.hex'
+Subtracting 0x80000000 base from addresses
+./exe_HW_sim  +v1  +tohost
+make: ./exe_HW_sim: No such file or directory
+make: *** [../../builds/Resources/Include_Common.mk:87: test] Error 127
+Execution time: .769941337 seconds
+=== RTL Simulation Complete ===

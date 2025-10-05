@@ -1,0 +1,114 @@
+nohup: ignoring input
+=== Setting up ALU Tests with COCOTB ===
+Working in: /export/scratch/users/hasan181
+Creating Python virtual environment...
+Installing COCOTB and dependencies...
+Requirement already satisfied: pip in ./.venv/lib/python3.12/site-packages (24.0)
+Collecting pip
+  Downloading pip-25.2-py3-none-any.whl.metadata (4.7 kB)
+Downloading pip-25.2-py3-none-any.whl (1.8 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.8/1.8 MB 9.8 MB/s eta 0:00:00
+Installing collected packages: pip
+  Attempting uninstall: pip
+    Found existing installation: pip 24.0
+    Uninstalling pip-24.0:
+      Successfully uninstalled pip-24.0
+Successfully installed pip-25.2
+Collecting cocotb
+  Downloading cocotb-2.0.0-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (3.0 kB)
+Collecting cocotb-coverage
+  Downloading cocotb_coverage-2.0-py3-none-any.whl.metadata (4.5 kB)
+Collecting pytest
+  Downloading pytest-8.4.2-py3-none-any.whl.metadata (7.7 kB)
+Collecting find_libpython (from cocotb)
+  Downloading find_libpython-0.5.0-py3-none-any.whl.metadata (2.8 kB)
+Collecting python-constraint (from cocotb-coverage)
+  Downloading python-constraint-1.4.0.tar.bz2 (18 kB)
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Getting requirements to build wheel: started
+  Getting requirements to build wheel: finished with status 'done'
+  Preparing metadata (pyproject.toml): started
+  Preparing metadata (pyproject.toml): finished with status 'done'
+Collecting pyyaml (from cocotb-coverage)
+  Downloading pyyaml-6.0.3-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (2.4 kB)
+Collecting iniconfig>=1 (from pytest)
+  Downloading iniconfig-2.1.0-py3-none-any.whl.metadata (2.7 kB)
+Collecting packaging>=20 (from pytest)
+  Downloading packaging-25.0-py3-none-any.whl.metadata (3.3 kB)
+Collecting pluggy<2,>=1.5 (from pytest)
+  Downloading pluggy-1.6.0-py3-none-any.whl.metadata (4.8 kB)
+Collecting pygments>=2.7.2 (from pytest)
+  Downloading pygments-2.19.2-py3-none-any.whl.metadata (2.5 kB)
+Downloading cocotb-2.0.0-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (4.6 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 4.6/4.6 MB 39.2 MB/s  0:00:00
+Downloading cocotb_coverage-2.0-py3-none-any.whl (21 kB)
+Downloading pytest-8.4.2-py3-none-any.whl (365 kB)
+Downloading pluggy-1.6.0-py3-none-any.whl (20 kB)
+Downloading iniconfig-2.1.0-py3-none-any.whl (6.0 kB)
+Downloading packaging-25.0-py3-none-any.whl (66 kB)
+Downloading pygments-2.19.2-py3-none-any.whl (1.2 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.2/1.2 MB 24.3 MB/s  0:00:00
+Downloading find_libpython-0.5.0-py3-none-any.whl (9.2 kB)
+Downloading pyyaml-6.0.3-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (807 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 807.9/807.9 kB 17.1 MB/s  0:00:00
+Building wheels for collected packages: python-constraint
+  Building wheel for python-constraint (pyproject.toml): started
+  Building wheel for python-constraint (pyproject.toml): finished with status 'done'
+  Created wheel for python-constraint: filename=python_constraint-1.4.0-py2.py3-none-any.whl size=24108 sha256=0f9fa8ff2a188b81742d81dc51fa716f9a1b92269fa539567e54f69f99ce04a5
+  Stored in directory: /home/hasan181/.cache/pip/wheels/c1/d2/3d/082849b61a9c6de02d4a7c8a402c224640f08d8a971307b92b
+Successfully built python-constraint
+Installing collected packages: python-constraint, pyyaml, pygments, pluggy, packaging, iniconfig, find_libpython, pytest, cocotb, cocotb-coverage
+
+Successfully installed cocotb-2.0.0 cocotb-coverage-2.0 find_libpython-0.5.0 iniconfig-2.1.0 packaging-25.0 pluggy-1.6.0 pygments-2.19.2 pytest-8.4.2 python-constraint-1.4.0 pyyaml-6.0.3
+Running ALU tests...
+rm -f results.xml
+"make" -f Makefile results.xml
+make[1]: Entering directory '/export/scratch/users/hasan181/HW-cocotb-alu/sim'
+mkdir -p sim_build
+/usr/bin/iverilog -o sim_build/sim.vvp -s alu -g2012 -f sim_build/cmds.f  /export/scratch/users/hasan181/HW-cocotb-alu/sim/../rtl/alu.v /export/scratch/users/hasan181/HW-cocotb-alu/sim/../rtl/dump.v
+/export/scratch/users/hasan181/HW-cocotb-alu/.venv/lib/python3.12/site-packages/cocotb_tools/makefiles/simulators/Makefile.icarus:66: Using MODULE is deprecated, please use COCOTB_TEST_MODULES instead.
+rm -f results.xml
+COCOTB_TEST_MODULES=test_alu      COCOTB_TESTCASE= COCOTB_TEST_FILTER= COCOTB_TOPLEVEL=alu TOPLEVEL_LANG=verilog \
+         /usr/bin/vvp -M /export/scratch/users/hasan181/HW-cocotb-alu/.venv/lib/python3.12/site-packages/cocotb/libs -m libcocotbvpi_icarus   sim_build/sim.vvp  -none 
+     -.--ns INFO     gpi                                ..mbed/gpi_embed.cpp:93   in _embed_init_python              Using Python 3.12.4 interpreter at /export/scratch/users/hasan181/HW-cocotb-alu/.venv/bin/python3
+     -.--ns INFO     gpi                                ../gpi/GpiCommon.cpp:79   in gpi_print_registered_impl       VPI registered
+     0.00ns INFO     cocotb                             Running on Icarus Verilog version 12.0 (stable)
+     0.00ns INFO     cocotb                             Seeding Python random module with 1759618253
+     0.00ns INFO     cocotb                             Initialized cocotb v2.0.0 from /export/scratch/users/hasan181/HW-cocotb-alu/.venv/lib/python3.12/site-packages/cocotb
+Traceback (most recent call last):
+  File "/export/scratch/users/hasan181/HW-cocotb-alu/.venv/lib/python3.12/site-packages/pygpi/entry.py", line 42, in load_entry
+    entry_func(argv)
+  File "/export/scratch/users/hasan181/HW-cocotb-alu/.venv/lib/python3.12/site-packages/cocotb/_init.py", line 102, in run_regression
+    _setup_regression_manager()
+  File "/export/scratch/users/hasan181/HW-cocotb-alu/.venv/lib/python3.12/site-packages/cocotb/_init.py", line 283, in _setup_regression_manager
+    cocotb._regression_manager.discover_tests(*modules)
+  File "/export/scratch/users/hasan181/HW-cocotb-alu/.venv/lib/python3.12/site-packages/cocotb/regression.py", line 190, in discover_tests
+    mod = import_module(module_name)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/importlib/__init__.py", line 90, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "/export/scratch/users/hasan181/HW-cocotb-alu/.venv/lib/python3.12/site-packages/_pytest/assertion/rewrite.py", line 186, in exec_module
+    exec(co, module.__dict__)
+  File "/export/scratch/users/hasan181/HW-cocotb-alu/sim/test_alu.py", line 8, in <module>
+    from cocotb.result import TestFailure
+ImportError: cannot import name 'TestFailure' from 'cocotb.result' (/export/scratch/users/hasan181/HW-cocotb-alu/.venv/lib/python3.12/site-packages/cocotb/result.py)
+Traceback (most recent call last):
+  File "/export/scratch/users/hasan181/HW-cocotb-alu/.venv/lib/python3.12/site-packages/cocotb/_init.py", line 117, in _sim_event
+    cocotb._regression_manager._fail_simulation(msg)
+  File "/export/scratch/users/hasan181/HW-cocotb-alu/.venv/lib/python3.12/site-packages/cocotb/regression.py", line 895, in _fail_simulation
+    self._running_test.abort(self._sim_failure)
+    ^^^^^^^^^^^^^^^^^^
+AttributeError: 'RegressionManager' object has no attribute '_running_test'
+     0.00ns ERROR    gpi                                Passing event to upper layer failed
+make[1]: *** [/export/scratch/users/hasan181/HW-cocotb-alu/.venv/lib/python3.12/site-packages/cocotb_tools/makefiles/simulators/Makefile.icarus:67: results.xml] Error 1
+make[1]: Leaving directory '/export/scratch/users/hasan181/HW-cocotb-alu/sim'
+make: *** [/export/scratch/users/hasan181/HW-cocotb-alu/.venv/lib/python3.12/site-packages/cocotb_tools/makefiles/Makefile.inc:17: sim] Error 2
+=== ALU Test Results ===
+Looking for error logs...
+=== ALU Testing Complete ===

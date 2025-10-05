@@ -39,10 +39,20 @@ class SimulationAnalyzer:
         try:
             with open(stats_file, 'r') as f:
                 for line in f:
-                    if 'cpi' in line.lower() and '=' in line:
-                        cpi = float(line.split('=')[1].strip())
-                    elif 'hosttickrate' in line.lower() and '=' in line:
-                        host_tick_rate = float(line.split('=')[1].strip())
+                    line = line.strip()
+                    if not line.startswith('#'):
+                        parts = line.split()
+                        if len(parts) >= 2:
+                            if 'system.cpu.cpi' in line:
+                                try:
+                                    cpi = float(parts[1])
+                                except ValueError:
+                                    pass
+                            elif 'hostTickRate' in line.lower():
+                                try:
+                                    host_tick_rate = float(parts[1])
+                                except ValueError:
+                                    pass
         except Exception as e:
             print(f"Error parsing {stats_file}: {e}")
             
@@ -81,11 +91,26 @@ class SimulationAnalyzer:
     
     def collect_gem5_results(self):
         """Collect GEM5 simulation results"""
-        # Look for GEM5 results directories
+        # Look for GEM5 results in gem5_results directory
+        gem5_results_dir = self.results_dir / "gem5_results"
+        if gem5_results_dir.exists():
+            for stats_file in gem5_results_dir.glob("*_stats.txt"):
+                config_name = stats_file.stem.replace('_stats', '')
+                self.gem5_results[config_name] = {}
+                
+                cpi, host_tick_rate = self.parse_gem5_stats(stats_file)
+                if cpi is not None:
+                    self.gem5_results[config_name]['hello_world'] = {
+                        'cpi': cpi,
+                        'host_tick_rate': host_tick_rate
+                    }
+        
+        # Also check the old results directory structure for compatibility
         for config_dir in self.results_dir.glob("results/*"):
             if config_dir.is_dir():
                 config_name = config_dir.name
-                self.gem5_results[config_name] = {}
+                if config_name not in self.gem5_results:
+                    self.gem5_results[config_name] = {}
                 
                 # Look for stats.txt files
                 for stats_file in config_dir.glob("**/stats.txt"):
